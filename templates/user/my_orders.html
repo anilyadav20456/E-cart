@@ -1,0 +1,128 @@
+{% extends "user/base.html" %}
+
+{% block title %}My Orders | SmartCart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
+<style>
+    .orders-container {
+        width: 80%;
+        max-width: 900px;
+        margin: 40px auto;
+    }
+
+    .orders-container h2 {
+        font-size: 28px;
+        color: #0f172a;
+        margin-bottom: 25px;
+    }
+
+    .order-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        padding: 20px 25px;
+        margin-bottom: 20px;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .order-header h3 {
+        margin: 0 0 6px 0;
+        font-size: 18px;
+        color: #1e293b;
+    }
+
+    .order-info {
+        line-height: 1.6;
+        font-size: 14px;
+        color: #475569;
+    }
+
+    .order-status-badge {
+        display: inline-block;
+        background: #dcfce7;
+        color: #15803d;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .view-btn {
+        padding: 10px 18px;
+        background-color: #2563eb;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        transition: 0.2s ease;
+    }
+
+    .view-btn:hover {
+        background-color: #1d4ed8;
+        color: white;
+    }
+
+    .empty-orders {
+        background: #ffffff;
+        padding: 40px;
+        text-align: center;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .empty-orders p {
+        font-size: 16px;
+        color: #64748b;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="orders-container">
+
+    <h2>📦 My Orders</h2>
+
+    {% if orders|length == 0 %}
+        <div class="empty-orders">
+            <p>You have not placed any orders yet.</p>
+            <a href="/user/products" class="view-btn">Start Shopping</a>
+        </div>
+    {% else %}
+
+        {% for order in orders %}
+        <div class="order-card">
+            <div>
+                <div class="order-header">
+                    <h3>Order #{{ order.order_id }} <span class="order-status-badge">{{ order.payment_status }}</span></h3>
+                </div>
+                <div class="order-info">
+                    <p><strong>Amount Paid:</strong> ₹{{ order.amount }}</p>
+                    <p><strong>Payment ID:</strong> <span style="font-family:monospace;">{{ order.razorpay_payment_id }}</span></p>
+                    <p><strong>Date:</strong> {{ order.created_at }}</p>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:10px; align-items:center;">
+                <a href="/user/download-invoice/{{ order.order_id }}" class="view-btn" style="background:#10b981;">
+                    📥 Download Invoice
+                </a>
+                <a href="/user/order-success/{{ order.order_id }}" class="view-btn">
+                    View Details
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#f8fafc;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.login-container{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.login-card{
+    width:100%;
+    max-width:430px;
+    background:#ffffff;
+    border:1px solid #e2e8f0;
+    border-radius:20px;
+    padding:40px;
+    box-shadow:0 12px 35px rgba(15,23,42,.08);
+}
+
+.login-card h2{
+    text-align:center;
+    color:#1e40af;
+    font-size:30px;
+    margin-bottom:8px;
+    font-weight:700;
+}
+
+.login-card p{
+    text-align:center;
+    color:#64748b;
+    margin-bottom:30px;
+    font-size:15px;
+}
+
+.flash{
+    background:#eff6ff;
+    color:#1e40af;
+    border-left:4px solid #3b82f6;
+    padding:14px;
+    border-radius:10px;
+    margin-bottom:20px;
+    font-size:14px;
+}
+
+label{
+    display:block;
+    font-weight:600;
+    color:#334155;
+    margin-bottom:8px;
+}
+
+input{
+    width:100%;
+    padding:14px 16px;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    outline:none;
+    font-size:15px;
+    margin-bottom:20px;
+    transition:.3s;
+    background:#ffffff;
+}
+
+input:focus{
+    border-color:#3b82f6;
+    box-shadow:0 0 0 4px rgba(59,130,246,.12);
+}
+
+button{
+    width:100%;
+    background:#2563eb;
+    color:#ffffff;
+    border:none;
+    padding:15px;
+    border-radius:10px;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    background:#1d4ed8;
+    transform:translateY(-2px);
+    box-shadow:0 10px 20px rgba(37,99,235,.18);
+}
+
+.links{
+    margin-top:25px;
+    text-align:center;
+    color:#64748b;
+    font-size:15px;
+}
+
+.links a{
+    color:#2563eb;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.links a:hover{
+    text-decoration:underline;
+}
+
+@media(max-width:480px){
+
+.login-card{
+    padding:30px 20px;
+}
+
+.login-card h2{
+    font-size:26px;
+}
+
+.login-card p{
+    font-size:14px;
+}
+
+button{
+    padding:14px;
+}
+
+}
+
+/* SmartCart admin theme */
+body{background:radial-gradient(circle at 8% 90%,rgba(251,175,73,.2),transparent 28%),radial-gradient(circle at 92% 10%,rgba(103,94,238,.25),transparent 30%),#f6f7fc}.login-card{border-color:#e3e6ef;border-radius:18px;box-shadow:0 20px 45px rgba(39,42,88,.1)}.login-card h2{color:#4239bf}.login-card p{color:#6b7690}input:focus{border-color:#746ce5;box-shadow:0 0 0 4px rgba(91,81,220,.12)}button{border-radius:9px;background:#5b51dc}button:hover{background:#4239bf}.flash{border-left-color:#5b51dc;color:#4239bf;background:#f0efff}.links a{color:#5b51dc}

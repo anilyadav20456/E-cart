@@ -1,0 +1,64 @@
+{% extends "user/base.html" %}
+
+{% block title %}
+{{ product.name }} | SmartCart
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_details.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="product-details-page">
+    <div class="product-container">
+        <!-- LEFT -->
+        <div class="product-image-box">
+            <img src="{{ product_image_url(product.image) }}" alt="{{ product.name }}">
+        </div>
+
+        <!-- RIGHT -->
+        <div class="product-content">
+            <span class="category">{{ product.category }}</span>
+            <h1>{{ product.name }}</h1>
+            <div class="price">₹{{ product.price }}</div>
+
+            <div class="product-status">
+                <span class="return">🔄 7 Days Return</span>
+            </div>
+
+            <div class="description">
+                <h3>Product Description</h3>
+                <p>{{ product.description }}</p>
+            </div>
+
+            <div class="quantity">
+                <label>Quantity</label>
+                <div class="qty-box">
+                    <button>-</button>
+                    <span>1</span>
+                    <button>+</button>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="{{ url_for('add_to_cart', product_id=product.product_id) }}" class="cart-btn">
+                    🛒 Add to Cart
+                </a>
+                <a href="#" class="buy-btn">
+                    ⚡ Buy Now
+                </a>
+            </div>
+
+            <div class="extra-info">
+                <div>🔒 Secure Payment</div>
+                <div>🚚 Fast Delivery</div>
+                <div>💯 Genuine Products</div>
+            </div>
+
+            <a href="{{ url_for('user_products') }}" class="back-btn">
+                ← Back to Products
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,195 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  background-color: #f8fafc;
+  color: #0f172a;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.index-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* NAVBAR */
+.index-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0;
+}
+
+.index-logo {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  text-decoration: none;
+  letter-spacing: -0.5px;
+}
+
+.index-logo span {
+  color: #2563eb;
+}
+
+.index-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.index-nav-links a {
+  color: #475569;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.index-nav-links a:hover {
+  color: #2563eb;
+}
+
+.index-nav-links .admin-link {
+  background: #f1f5f9;
+  padding: 8px 16px;
+  border-radius: 8px;
+  color: #334155;
+}
+
+.index-nav-links .admin-link:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+/* HERO */
+.index-hero {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.hero-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 48px 40px;
+  text-align: center;
+  max-width: 680px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+.hero-badge {
+  display: inline-block;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+
+.hero-card h1 {
+  font-size: 34px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.8px;
+  margin-bottom: 10px;
+}
+
+.hero-card h1 span {
+  color: #2563eb;
+}
+
+.hero-card p {
+  color: #64748b;
+  font-size: 16px;
+  margin-bottom: 32px;
+}
+
+/* PORTAL CARDS */
+.portal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.portal-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  text-align: left;
+  transition: 0.2s ease;
+}
+
+.portal-card:hover {
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.08);
+  transform: translateY(-2px);
+}
+
+.portal-icon {
+  font-size: 28px;
+}
+
+.portal-info h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.portal-info p {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 0;
+}
+
+.arrow {
+  margin-left: auto;
+  font-size: 18px;
+  color: #2563eb;
+  font-weight: bold;
+}
+
+/* FOOTER */
+.index-footer {
+  padding: 24px 0;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+@media (max-width: 600px) {
+  .portal-grid {
+    grid-template-columns: 1fr;
+  }
+  .hero-card {
+    padding: 32px 20px;
+  }
+  .hero-card h1 {
+    font-size: 26px;
+  }
+}

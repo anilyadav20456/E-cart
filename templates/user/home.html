@@ -1,0 +1,91 @@
+{% extends "user/base.html" %}
+
+{% block title %}
+SmartCart | Home
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<!-- ================= HERO SECTION ================= -->
+<section class="hero">
+    <div class="hero-left">
+        <span class="offer-tag">🔥 Big Sale 2026</span>
+        <h1>Shop Smarter with <span>SmartCart</span></h1>
+        <p>Discover thousands of quality products at unbeatable prices. Enjoy secure payments, fast delivery and a hassle-free shopping experience.</p>
+        
+        <div class="hero-buttons">
+            <a href="{{ url_for('user_products') }}" class="shop-btn">Shop Now</a>
+            <a href="{{ url_for('user_products') }}" class="explore-btn">Explore Products</a>
+        </div>
+    </div>
+
+</section>
+
+<!-- ================= CATEGORIES ================= -->
+<section class="categories">
+    <div class="section-title">
+        <h2>Shop By Category</h2>
+        <p>Browse products from your favourite categories.</p>
+    </div>
+
+    <div class="category-grid">
+        <div class="category-card">
+            <img src="{{ url_for('static', filename='images/electronics.png') }}">
+            <h3>Electronics</h3>
+            <a href="{{ url_for('user_products') }}">View Products</a>
+        </div>
+
+        <div class="category-card">
+            <img src="{{ url_for('static', filename='images/fashion.png') }}">
+            <h3>Fashion</h3>
+            <a href="{{ url_for('user_products') }}">View Products</a>
+        </div>
+
+        <div class="category-card">
+            <img src="{{ url_for('static', filename='images/home.png') }}">
+            <h3>Home</h3>
+            <a href="{{ url_for('user_products') }}">View Products</a>
+        </div>
+
+        <div class="category-card">
+            <img src="{{ url_for('static', filename='images/grocery.png') }}">
+            <h3>Grocery</h3>
+            <a href="{{ url_for('user_products') }}">View Products</a>
+        </div>
+    </div>
+</section>
+
+<!-- ================= FEATURED PRODUCTS ================= -->
+<section class="products">
+    <div class="section-title">
+        <h2>Featured Products</h2>
+        <p>Explore our latest and most popular products.</p>
+    </div>
+
+    <div class="product-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <div class="product-image">
+                <img src="{{ product_image_url(product.image) }}" alt="{{ product.name }}">
+            </div>
+
+            <div class="product-info">
+                <span class="product-category">Premium Product</span>
+                <h3>{{ product.name }}</h3>
+                <p class="price">₹{{ product.price }}</p>
+
+                <div class="product-buttons">
+                    <a href="/add-to-cart/{{ product.product_id }}" class="cart-btn">Add to Cart</a>
+                    <a href="/product/{{ product.product_id }}" class="details-btn">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

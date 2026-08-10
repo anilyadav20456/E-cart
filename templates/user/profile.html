@@ -1,0 +1,170 @@
+{% extends "user/base.html" %}
+
+{% block title %}My Profile | SmartCart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+<style>
+    .profile-card-wrapper {
+        max-width: 800px;
+        margin: 40px auto;
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        border: 1px solid #e2e8f0;
+    }
+
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        border-bottom: 1px solid #f1f5f9;
+        padding-bottom: 25px;
+        margin-bottom: 30px;
+    }
+
+    .profile-avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: #2563eb;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        font-weight: 700;
+        box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+    }
+
+    .profile-header-info h1 {
+        font-size: 24px;
+        color: #0f172a;
+        margin-bottom: 4px;
+    }
+
+    .profile-header-info p {
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .profile-form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        font-size: 14px;
+        font-weight: 600;
+        color: #334155;
+    }
+
+    .form-group input {
+        padding: 14px 16px;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        font-size: 15px;
+        outline: none;
+        transition: 0.2s ease;
+    }
+
+    .form-group input:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    }
+
+    .profile-actions {
+        margin-top: 30px;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .btn-save {
+        background: #2563eb;
+        color: #ffffff;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .btn-save:hover {
+        background: #1d4ed8;
+    }
+
+    .btn-orders {
+        background: #f1f5f9;
+        color: #334155;
+        text-decoration: none;
+        padding: 14px 24px;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        transition: 0.2s ease;
+    }
+
+    .btn-orders:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-card-wrapper">
+    <div class="profile-header">
+        <div class="profile-avatar">
+            {{ (user.fullname or 'U')[0] | upper }}
+        </div>
+        <div class="profile-header-info">
+            <h1>{{ user.fullname }}</h1>
+            <p>Customer Profile & Account Settings</p>
+        </div>
+    </div>
+
+    <form action="{{ url_for('user_profile') }}" method="POST">
+        <div class="profile-form-grid">
+            <div class="form-group">
+                <label for="fullname">Full Name</label>
+                <input type="text" id="fullname" name="fullname" value="{{ user.fullname }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" value="{{ user.email }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="text" id="phone" name="phone" value="{{ user.phone or '' }}" placeholder="Enter phone number">
+            </div>
+
+            <div class="form-group">
+                <label for="password">New Password (leave blank to keep current)</label>
+                <input type="password" id="password" name="password" placeholder="••••••••">
+            </div>
+        </div>
+
+        <div class="profile-actions">
+            <button type="submit" class="btn-save">💾 Save Changes</button>
+            <a href="/user/my-orders" class="btn-orders">📦 View My Orders</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

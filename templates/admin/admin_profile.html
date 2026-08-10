@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_profile.css') }}">
+</head>
+<body>
+
+<div class="navbar">
+    <h2>SmartCart Admin</h2>
+
+    <div class="nav-links">
+        <a href="/admin-dashboard">Dashboard</a>
+        <a href="/admin/view-products">Products</a>
+        <a href="/admin-logout" class="logout-btn">Logout</a>
+    </div>
+</div>
+
+<div class="profile-container">
+
+    <h1>👤 My Profile</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form action="/admin/profile" method="POST" enctype="multipart/form-data">
+
+        <div class="profile-image">
+
+            {% if admin.profile_image %}
+                <img src="{{ url_for('static', filename='uploads/admin_profiles/' + admin.profile_image) }}">
+            {% else %}
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+            {% endif %}
+
+        </div>
+
+        <label>Name</label>
+        <input
+            type="text"
+            name="name"
+            value="{{ admin.name }}"
+            required
+        >
+
+        <label>Email</label>
+        <input
+            type="email"
+            name="email"
+            value="{{ admin.email }}"
+            required
+        >
+
+        <label>New Password</label>
+        <input
+            type="password"
+            name="password"
+            placeholder="Leave blank to keep current password"
+        >
+
+        <label>Profile Image</label>
+        <input
+            type="file"
+            name="profile_image"
+        >
+
+        <button type="submit">
+            Update Profile
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

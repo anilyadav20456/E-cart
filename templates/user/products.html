@@ -1,0 +1,72 @@
+{% extends "user/base.html" %}
+
+{% block title %}
+SmartCart | Products
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/products.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="products-page">
+
+    <!-- ================= HEADER ================= -->
+    <div class="page-header">
+        <h1>Explore Our Products</h1>
+        <p>Discover premium quality products at the best prices.</p>
+    </div>
+
+    <!-- ================= FILTER BAR ================= -->
+    <div class="filter-bar">
+        <form action="{{ url_for('user_products') }}" method="GET">
+            <input type="text" name="search" value="{{ search }}" placeholder="🔍 Search products...">
+
+            <select name="category">
+                <option value="">All Categories</option>
+                <option value="Electronics" {% if category=="Electronics" %}selected{% endif %}>Electronics</option>
+                <option value="Fashion" {% if category=="Fashion" %}selected{% endif %}>Fashion</option>
+                <option value="Home" {% if category=="Home" %}selected{% endif %}>Home</option>
+                <option value="Grocery" {% if category=="Grocery" %}selected{% endif %}>Grocery</option>
+            </select>
+
+            <button type="submit">Apply Filters</button>
+            <a href="{{ url_for('user_products') }}" class="reset-btn">Reset</a>
+        </form>
+    </div>
+
+    <!-- ================= PRODUCTS ================= -->
+    <div class="product-grid">
+        {% if products %}
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="{{ product_image_url(product.image) }}" alt="{{ product.name }}">
+                </div>
+
+                <div class="product-info">
+                    <span class="product-category">{{ product.category }}</span>
+                    <h3>{{ product.name }}</h3>
+                    <div class="price">₹{{ product.price }}</div>
+
+                    <div class="product-buttons">
+                        <a href="{{ url_for('add_to_cart', product_id=product.product_id) }}" class="cart-btn add-cart-btn">
+                            🛒 Add to Cart
+                        </a>
+                        <a href="{{ url_for('product_details', product_id=product.product_id) }}" class="details-btn">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-products">
+                <h2>😔 No Products Found</h2>
+                <p>Try changing the search or category filter.</p>
+            </div>
+        {% endif %}
+    </div>
+
+</section>
+{% endblock %}

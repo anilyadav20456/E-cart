@@ -1,0 +1,79 @@
+{% extends "user/base.html" %}
+
+{% block title %}My Cart | SmartCart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="cart-page">
+    <div class="cart-hero">
+        <div><p class="eyebrow">Shopping basket</p><h1>My Cart</h1><p class="hero-text">Select the items you want to purchase, then continue to checkout.</p></div>
+        {% if cart_items %}<div class="cart-count-pill">{{ cart_items|length }} items</div>{% endif %}
+    </div>
+
+    {% if cart_items %}
+    <div class="cart-layout">
+        <div class="cart-card">
+            <table class="cart-table">
+                <thead><tr><th>Select</th><th>Product</th><th>Price</th><th>Quantity</th><th>Total</th><th>Action</th></tr></thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    {% set item_total = item.price * item.quantity %}
+                    <tr>
+                        <td class="selection-cell"><input class="cart-item-check" type="checkbox" value="{{ item.cart_id }}" data-total="{{ item_total }}" aria-label="Select {{ item.name }}"></td>
+                        <td class="product-cell"><img src="{{ product_image_url(item.image) }}" alt="{{ item.name }}"><div><h3>{{ item.name }}</h3><p class="product-meta">Ready to purchase</p></div></td>
+                        <td>&#8377;{{ item.price }}</td>
+                        <td><div class="qty-box"><a href="{{ url_for('decrease_quantity', cart_id=item.cart_id) }}" class="qty-btn">&minus;</a><span>{{ item.quantity }}</span><a href="{{ url_for('increase_quantity', cart_id=item.cart_id) }}" class="qty-btn">+</a></div></td>
+                        <td>&#8377;{{ item_total }}</td>
+                        <td><a href="{{ url_for('remove_cart_item', cart_id=item.cart_id) }}" class="remove-btn">Remove</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <aside class="cart-summary">
+            <h2>Order Summary</h2>
+            <div class="summary-row"><span>Selected items</span><span id="selected-count">0</span></div>
+            <div class="summary-row"><span>Subtotal</span><span id="subtotal-amount">&#8377;0.00</span></div>
+            <div class="summary-row"><span>Shipping</span><span>Free</span></div>
+            <div class="summary-row total"><span>Grand Total</span><span id="grand-total-amount">&#8377;0.00</span></div>
+            <p id="selection-message" class="selection-message">Select items to calculate your total.</p>
+            <a href="#" id="checkout-link" class="checkout-btn is-disabled" aria-disabled="true">Proceed to Checkout</a>
+            <a href="{{ url_for('user_products') }}" class="secondary-btn">Continue Shopping</a>
+        </aside>
+    </div>
+    {% else %}
+    <div class="empty-cart"><h2>Your cart is empty</h2><p>Start shopping and add your favourite products.</p><a href="{{ url_for('user_products') }}" class="shop-btn">Shop Now</a></div>
+    {% endif %}
+</section>
+
+{% if cart_items %}
+<script>
+  const itemChecks = document.querySelectorAll('.cart-item-check');
+  const selectedCount = document.getElementById('selected-count');
+  const subtotalAmount = document.getElementById('subtotal-amount');
+  const grandTotalAmount = document.getElementById('grand-total-amount');
+  const selectionMessage = document.getElementById('selection-message');
+  const checkoutLink = document.getElementById('checkout-link');
+  const checkoutBase = {{ url_for('checkout')|tojson }};
+
+  function updateSelectedTotal() {
+    const selected = [...itemChecks].filter(check => check.checked);
+    const total = selected.reduce((sum, check) => sum + Number(check.dataset.total), 0);
+    selectedCount.textContent = selected.length;
+    subtotalAmount.textContent = `₹${total.toFixed(2)}`;
+    grandTotalAmount.textContent = `₹${total.toFixed(2)}`;
+    const hasSelection = selected.length > 0;
+    selectionMessage.textContent = hasSelection ? `${selected.length} item${selected.length === 1 ? '' : 's'} selected.` : 'Select items to calculate your total.';
+    checkoutLink.classList.toggle('is-disabled', !hasSelection);
+    checkoutLink.setAttribute('aria-disabled', String(!hasSelection));
+    checkoutLink.href = hasSelection ? `${checkoutBase}?cart_ids=${selected.map(check => check.value).join(',')}` : '#';
+  }
+  itemChecks.forEach(check => check.addEventListener('change', updateSelectedTotal));
+  checkoutLink.addEventListener('click', event => { if (checkoutLink.getAttribute('aria-disabled') === 'true') event.preventDefault(); });
+</script>
+{% endif %}
+{% endblock %}

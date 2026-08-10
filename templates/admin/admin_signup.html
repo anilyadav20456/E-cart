@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Signup</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
+</head>
+<body>
+
+<div class="signup-container">
+
+    <div class="signup-card">
+
+        <h2>Admin Registration</h2>
+        <p>Create your SmartCart Admin Account</p>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <form method="POST" action="/admin-signup">
+
+            <label>Full Name</label>
+            <input type="text" name="name" placeholder="Enter your name" required>
+
+            <label>Email Address</label>
+            <input type="email" name="email" placeholder="Enter your email" required>
+
+            <button type="submit">
+                Send OTP
+            </button>
+
+        </form>
+
+        <div class="links">
+            Already have an account?
+            <a href="/admin-login">Login</a>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

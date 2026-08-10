@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/add_product.css') }}">
+</head>
+<body>
+
+<!-- Floating Side Pop Message Toast Container -->
+<div id="sideToastContainer" class="side-toast-container"></div>
+
+<div class="container">
+
+    <div class="card">
+
+        <h2>Add New Product</h2>
+        <p class="subtitle">Fill in the product details below.</p>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <form id="addItemForm" method="POST" action="/admin/add-item" enctype="multipart/form-data">
+
+            <label>Product Name</label>
+            <input type="text" id="productName" name="name" placeholder="Enter product name" required>
+
+            <label>Description</label>
+            <textarea id="productDesc" name="description" rows="4" placeholder="Enter product description" required></textarea>
+
+            <label>Category</label>
+            <input type="text" id="productCategory" name="category" placeholder="Enter category" required>
+
+            <label>Price</label>
+            <input type="number" step="0.01" id="productPrice" name="price" placeholder="Enter price" required>
+
+            <label>Product Image</label>
+            <input type="file" id="productImage" name="image" accept="image/*" required>
+
+            <button type="submit" id="submitBtn">
+                <span class="btn-text">Add Product</span>
+                <span class="btn-spinner" style="display:none;">⏳ Adding Product...</span>
+            </button>
+
+        </form>
+
+        <div class="back">
+            <a href="/admin-dashboard">← Back to Dashboard</a>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById("addItemForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const btnText = submitBtn.querySelector(".btn-text");
+    const btnSpinner = submitBtn.querySelector(".btn-spinner");
+    const toastContainer = document.getElementById("sideToastContainer");
+
+    function showSideToast(product) {
+        const toast = document.createElement("div");
+        toast.className = "side-pop-toast";
+        
+        const imageUrl = product.image_url || `{{ url_for('static', filename='uploads/product_images/') }}${product.image}`;
+        
+        toast.innerHTML = `
+            <div class="toast-header">
+                <div class="toast-title">
+                    <span class="toast-icon">✓</span>
+                    <span>Product Added Successfully!</span>
+                </div>
+                <button type="button" class="toast-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="toast-body">
+                <img src="${imageUrl}" alt="${product.name}" class="toast-img">
+                <div class="toast-info">
+                    <h4 class="toast-name">${product.name}</h4>
+                    <div class="toast-meta">
+                        <span class="toast-cat">${product.category}</span>
+                        <span class="toast-price">₹${parseFloat(product.price).toFixed(2)}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="toast-actions">
+                <a href="/admin/view-products" class="toast-view-btn">📋 View All Products</a>
+            </div>
+            <div class="toast-progress"></div>
+        `;
+
+        toastContainer.appendChild(toast);
+
+        // Trigger smooth slide in from the right edge
+        requestAnimationFrame(() => {
+            toast.classList.add("show");
+        });
+
+        // Close button click listener
+        const closeBtn = toast.querySelector(".toast-close");
+        closeBtn.addEventListener("click", function() {
+            dismissToast(toast);
+        });
+
+        // Auto dismiss timer (6 seconds)
+        const autoDismissTimer = setTimeout(function() {
+            dismissToast(toast);
+        }, 6000);
+
+        function dismissToast(el) {
+            clearTimeout(autoDismissTimer);
+            el.classList.remove("show");
+            el.classList.add("hide");
+            setTimeout(function() {
+                if (el.parentNode) {
+                    el.parentNode.removeChild(el);
+                }
+            }, 400);
+        }
+    }
+
+    form.addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+
+        // Disable button & show spinner
+        submitBtn.disabled = true;
+        btnText.style.display = "none";
+        btnSpinner.style.display = "inline-block";
+
+        fetch("/admin/add-item", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show floating side pop message notification
+                showSideToast(data.product);
+                // Reset form inputs for adding next item on that screen
+                form.reset();
+            } else if (data.message) {
+                alert(data.message);
+            }
+        })
+        .catch(err => {
+            console.error("Upload error:", err);
+            // Fallback: standard submission if fetch fails
+            form.submit();
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            btnText.style.display = "inline-block";
+            btnSpinner.style.display = "none";
+        });
+    });
+
+    {% if last_added %}
+    showSideToast({
+        name: "{{ last_added.name|e }}",
+        category: "{{ last_added.category|e }}",
+        price: "{{ last_added.price }}",
+        image: "{{ last_added.image|e }}"
+    });
+    {% endif %}
+});
+</script>
+
+</body>
+</html>

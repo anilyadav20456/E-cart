@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2563eb">
+  <title>SmartCart | Welcome</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+  <div class="index-wrapper">
+    <header class="index-navbar">
+      <a href="/" class="index-logo">Smart<span>Cart</span></a>
+      <div class="index-nav-links">
+        <a href="{{ url_for('user_products') }}">Products</a>
+        <a href="{{ url_for('user_login') }}">Customer Login</a>
+        <a href="{{ url_for('admin_login') }}" class="admin-link">Admin</a>
+      </div>
+    </header>
+
+    <main class="index-hero">
+      <div class="hero-card">
+        <span class="hero-badge">🛒 Welcome to SmartCart</span>
+        <h1>Everyday Shopping, <span>Made Simple.</span></h1>
+        <p>Explore thousands of quality products or access your management portal.</p>
+
+        <div class="portal-grid">
+          <a href="{{ url_for('user_login') }}" class="portal-card customer-portal">
+            <div class="portal-icon">🛍️</div>
+            <div class="portal-info">
+              <h3>Customer Portal</h3>
+              <p>Browse products & track your orders</p>
+            </div>
+            <span class="arrow">→</span>
+          </a>
+
+          <a href="{{ url_for('admin_login') }}" class="portal-card admin-portal">
+            <div class="portal-icon">⚙️</div>
+            <div class="portal-info">
+              <h3>Admin Portal</h3>
+              <p>Manage products & catalog</p>
+            </div>
+            <span class="arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="index-footer">
+      <p>© 2026 SmartCart. All rights reserved.</p>
+    </footer>
+  </div>
+</body>
+</html>

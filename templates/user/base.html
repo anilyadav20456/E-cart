@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2563eb">
+  <title>{% block title %}SmartCart{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body id="top">
+
+  <!-- Floating Toast Container for Add to Cart Notifications -->
+  <div id="userToastContainer" class="user-toast-container"></div>
+
+  <header class="app-navbar">
+    <div class="navbar-container">
+      <a class="brand-logo" href="{{ url_for('user_home') }}">
+        Smart<span>Cart</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="{{ url_for('user_home') }}">Home</a>
+        <a href="{{ url_for('user_products') }}">Products</a>
+        <a href="{{ url_for('my_orders') }}">My Orders</a>
+      </nav>
+
+      <div class="navbar-actions">
+        <form class="nav-search-form" action="{{ url_for('user_products') }}" method="get">
+          <input name="search" placeholder="Search products..." aria-label="Search products">
+          <button type="submit">🔍</button>
+        </form>
+
+        <a class="nav-cart-btn" href="{{ url_for('view_cart') }}">
+          🛒 Cart <span class="cart-badge">{{ cart_count }}</span>
+        </a>
+
+        {% if session.get('user_id') %}
+        <div class="user-dropdown">
+          <button class="user-profile-btn" type="button" aria-expanded="false">
+            👤 {{ session.get('user_name','User').split()[0] }} ▾
+          </button>
+          <div class="user-dropdown-menu">
+            <a href="{{ url_for('user_profile') }}">My Profile</a>
+            <a href="{{ url_for('my_orders') }}">My Orders</a>
+            <hr>
+            <a href="{{ url_for('user_logout') }}" class="logout-link">Sign Out</a>
+          </div>
+        </div>
+        {% else %}
+        <a href="/user-login" class="nav-login-btn">Log In</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-container">
+      <p>© 2026 <strong>SmartCart</strong>. Simple, modern shopping.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Profile Dropdown Toggle
+      const profileBtn = document.querySelector('.user-profile-btn');
+      const dropdownMenu = document.querySelector('.user-dropdown-menu');
+      if (profileBtn && dropdownMenu) {
+        profileBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dropdownMenu.classList.toggle('show');
+        });
+        window.addEventListener('click', () => {
+          dropdownMenu.classList.remove('show');
+        });
+      }
+
+      // Pop Message Toast helper
+      const toastContainer = document.getElementById("userToastContainer");
+
+      window.showUserCartToast = function(productName, messageText) {
+        if (!toastContainer) return;
+        const toast = document.createElement("div");
+        toast.className = "user-pop-toast";
+
+        const text = messageText || `'${productName}' added to cart successfully!`;
+
+        toast.innerHTML = `
+          <div class="toast-header">
+            <div class="toast-title">
+              <span class="toast-icon">🛒</span>
+              <span>Added to Cart Successfully!</span>
+            </div>
+            <button type="button" class="toast-close" aria-label="Close">&times;</button>
+          </div>
+          <div class="toast-body">
+            ${text}
+          </div>
+          <div class="toast-actions">
+            <a href="{{ url_for('view_cart') }}" class="toast-cart-link">🛒 View Cart</a>
+          </div>
+          <div class="toast-progress-bar"></div>
+        `;
+
+        toastContainer.appendChild(toast);
+
+        requestAnimationFrame(() => {
+          toast.classList.add("show");
+        });
+
+        const closeBtn = toast.querySelector(".toast-close");
+        closeBtn.addEventListener("click", () => {
+          dismissToast(toast);
+        });
+
+        const timer = setTimeout(() => {
+          dismissToast(toast);
+        }, 5000);
+
+        function dismissToast(el) {
+          clearTimeout(timer);
+          el.classList.remove("show");
+          el.classList.add("hide");
+          setTimeout(() => {
+            if (el.parentNode) {
+              el.parentNode.removeChild(el);
+            }
+          }, 400);
+        }
+      };
+
+      // Intercept all "Add to Cart" link clicks globally across all pages
+      document.addEventListener("click", function(e) {
+        const link = e.target.closest('a[href*="/add-to-cart/"]');
+        if (!link) return;
+
+        e.preventDefault();
+
+        // Visual click feedback
+        link.style.opacity = "0.7";
+
+        fetch(link.href, {
+          headers: {
+            "X-Requested-With": "XMLHttpRequest"
+          }
+        })
+        .then(res => {
+          if (res.redirected) {
+            window.location.href = res.url;
+            return;
+          }
+          return res.json();
+        })
+        .then(data => {
+          if (data && data.success) {
+            // Update Cart Badge counter in navbar
+            const badge = document.querySelector(".cart-badge");
+            if (badge) {
+              badge.textContent = data.cart_count;
+            }
+
+            // Show floating pop message notification on screen!
+            showUserCartToast(data.product_name || "Item", data.message);
+          } else if (data && data.message) {
+            alert(data.message);
+          }
+        })
+        .catch(err => {
+          console.error("Cart error:", err);
+          window.location.href = link.href;
+        })
+        .finally(() => {
+          link.style.opacity = "1";
+        });
+      });
+
+      // Display flashed messages if any on page load
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          showUserCartToast("Product", "{{ message|e }}");
+        {% endfor %}
+      {% endwith %}
+    });
+  </script>
+</body>
+</html>

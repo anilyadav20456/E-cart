@@ -1,0 +1,42 @@
+{% extends "user/base_public.html" %}
+
+{% block title %}Sign In | SmartCart{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-logo">🛒</div>
+        <h2>Sign In</h2>
+        <p class="auth-subtitle">Welcome back! Sign in to access your SmartCart account.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-alert flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('user_login') }}" method="POST" class="auth-form">
+            <div class="input-group">
+                <label for="email">Email Address</label>
+                <input id="email" type="email" name="email" placeholder="name@example.com" required autofocus>
+            </div>
+
+            <div class="input-group">
+                <div class="password-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <label for="password" style="margin-bottom:0;">Password</label>
+                    <a href="/forgot-password" style="font-size:13px; color:#2563eb; text-decoration:none;">Forgot password?</a>
+                </div>
+                <input id="password" type="password" name="password" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="auth-btn">Sign In</button>
+        </form>
+
+        <div class="auth-footer">
+            Don't have an account? <a href="/user-signup">Create account</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

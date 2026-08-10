@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+
+<div class="navbar">
+
+    <h2>SmartCart Admin</h2>
+
+    <a href="/admin-logout" class="logout-btn">Logout</a>
+
+</div>
+
+<div class="container">
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <h1>Welcome, {{ admin_name }} 👋</h1>
+
+    <p class="subtitle">
+        Manage your SmartCart products from the dashboard.
+    </p>
+
+    <div class="cards">
+
+        <!-- Add Product -->
+        <a href="/admin/add-item" class="card">
+            <h3>➕ Add Product</h3>
+            <p>Add new products with image, category and price.</p>
+        </a>
+
+        <!-- View Products -->
+        <a href="/admin/view-products" class="card">
+            <h3>📦 View Products</h3>
+            <p>View all products available in SmartCart.</p>
+        </a>
+
+        <!-- My Profile -->
+        <a href="/admin/profile" class="card">
+            <h3>👤 My Profile</h3>
+            <p>Update your name, email, password and profile picture.</p>
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

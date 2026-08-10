@@ -1,0 +1,132 @@
+{% extends "user/base.html" %}
+
+{% block title %}Payment Successful | SmartCart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
+<style>
+  .success-card {
+    max-width: 700px;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+    text-align: center;
+  }
+  .success-icon {
+    font-size: 60px;
+    color: #10b981;
+    margin-bottom: 15px;
+  }
+  .success-card h1 {
+    color: #065f46;
+    margin-bottom: 8px;
+    font-size: 32px;
+  }
+  .success-details {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 25px 0;
+    text-align: left;
+  }
+  .success-details p {
+    margin-bottom: 10px;
+    color: #334155;
+    font-size: 15px;
+  }
+  .success-details p:last-child {
+    margin-bottom: 0;
+  }
+  .invoice-items-summary {
+    margin-top: 15px;
+    border-top: 1px dashed #cbd5e1;
+    padding-top: 15px;
+  }
+  .invoice-item-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #475569;
+    padding: 6px 0;
+  }
+  .action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 25px;
+    flex-wrap: wrap;
+  }
+  .btn-invoice {
+    background: #2563eb;
+    color: #ffffff;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-invoice:hover {
+    background: #1d4ed8;
+    color: #ffffff;
+  }
+  .btn-shop {
+    background: #10b981;
+    color: #ffffff;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.2s ease;
+  }
+  .btn-shop:hover {
+    background: #059669;
+    color: #ffffff;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="checkout-page">
+    <div class="payment-card success-card">
+        <div class="success-icon">✅</div>
+        <h1>Payment Successful!</h1>
+        <p>Thank you for your order. Your transaction was processed successfully.</p>
+        
+        <div class="success-details">
+            <p><strong>Invoice No:</strong> {{ invoice.invoice_no if invoice else 'INV-1001' }}</p>
+            <p><strong>Payment ID:</strong> <span style="font-family: monospace; color:#2563eb;">{{ payment_id }}</span></p>
+            <p><strong>Order ID:</strong> <span style="font-family: monospace; color:#475569;">{{ order_id }}</span></p>
+            {% if invoice %}
+            <p><strong>Date & Time:</strong> {{ invoice.date }}</p>
+            <p><strong>Total Amount Paid:</strong> <strong style="color:#10b981; font-size:18px;">₹{{ invoice.total_amount }}</strong></p>
+            
+            {% if invoice['items'] %}
+            <div class="invoice-items-summary">
+                <p><strong>Purchased Items ({{ invoice['items']|length }}):</strong></p>
+                {% for item in invoice['items'] %}
+                <div class="invoice-item-row">
+                    <span>{{ item.name }} (x{{ item.quantity }})</span>
+                    <span>₹{{ item.total }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="action-buttons">
+            <a href="{{ url_for('user_invoice') }}" class="btn-invoice" target="_blank">📄 View & Print Invoice</a>
+            <a href="{{ url_for('user_products') }}" class="btn-shop">🛍️ Continue Shopping</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

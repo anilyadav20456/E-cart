@@ -1,0 +1,158 @@
+{% extends "user/base.html" %}
+
+{% block title %}Order Successful | SmartCart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
+<style>
+    .success-container {
+        width: 70%;
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 30px;
+        text-align: center;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+
+    .success-container h2 {
+        color: #10b981;
+        font-size: 28px;
+        margin-bottom: 8px;
+    }
+
+    .order-details {
+        text-align: left;
+        margin-top: 25px;
+        background: #f8fafc;
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        line-height: 1.8;
+    }
+
+    .order-details p {
+        color: #334155;
+        font-size: 15px;
+    }
+
+    .items-list {
+        margin-top: 25px;
+        text-align: left;
+    }
+
+    .items-list h3 {
+        margin-bottom: 12px;
+        color: #0f172a;
+        font-size: 18px;
+    }
+
+    .items-list table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    .items-list table, th, td {
+        border: 1px solid #e2e8f0;
+    }
+
+    th {
+        background: #f1f5f9;
+        color: #475569;
+        font-weight: 600;
+    }
+
+    th, td {
+        padding: 12px 15px;
+        font-size: 14px;
+        text-align: left;
+    }
+
+    .btn-group {
+        margin-top: 30px;
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 12px 22px;
+        background-color: #2563eb;
+        color: #ffffff;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 15px;
+        transition: 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn:hover {
+        background-color: #1d4ed8;
+        color: #ffffff;
+    }
+
+    .btn-secondary {
+        background-color: #10b981;
+    }
+
+    .btn-secondary:hover {
+        background-color: #059669;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="success-container">
+
+    <h2>🎉 Your Order is Confirmed!</h2>
+    <p>Thank you for shopping with <strong>SmartCart</strong>.</p>
+
+    <div class="order-details">
+        <p><strong>Order ID:</strong> #{{ order.order_id }}</p>
+        <p><strong>Payment ID:</strong> <span style="font-family: monospace; color:#2563eb;">{{ order.razorpay_payment_id }}</span></p>
+        <p><strong>Razorpay Order ID:</strong> <span style="font-family: monospace; color:#64748b;">{{ order.razorpay_order_id }}</span></p>
+        <p><strong>Amount Paid:</strong> <strong style="color:#10b981; font-size:17px;">₹{{ order.amount }}</strong></p>
+        <p><strong>Order Date:</strong> {{ order.created_at }}</p>
+    </div>
+
+    <div class="items-list">
+        <h3>Order Summary</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Price (₹)</th>
+                    <th>Subtotal (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for it in items %}
+                <tr>
+                    <td><strong>{{ it.product_name }}</strong></td>
+                    <td>{{ it.quantity }}</td>
+                    <td>₹{{ it.price }}</td>
+                    <td><strong>₹{{ it.price * it.quantity }}</strong></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="btn-group">
+        <a href="/user/download-invoice/{{ order.order_id }}" class="btn">📥 Download Invoice (PDF)</a>
+        <a href="/user/invoice" class="btn" target="_blank" style="background:#64748b;">📄 View Invoice</a>
+        <a href="/user/my-orders" class="btn btn-secondary">📦 View My Orders</a>
+        <a href="/user/products" class="btn" style="background:#334155;">🛍️ Continue Shopping</a>
+    </div>
+
+</div>
+{% endblock %}

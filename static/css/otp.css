@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#f8fafc;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    padding:20px;
+}
+
+.otp-container{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.otp-card{
+    width:100%;
+    max-width:450px;
+    background:#ffffff;
+    border:1px solid #e2e8f0;
+    border-radius:20px;
+    padding:40px;
+    box-shadow:0 12px 35px rgba(15,23,42,.08);
+}
+
+.otp-card h2{
+    text-align:center;
+    color:#1e3a8a;
+    font-size:30px;
+    margin-bottom:10px;
+}
+
+.otp-card p{
+    text-align:center;
+    color:#64748b;
+    font-size:15px;
+    line-height:1.6;
+    margin-bottom:30px;
+}
+
+.flash{
+    background:#eff6ff;
+    color:#1e40af;
+    border-left:4px solid #3b82f6;
+    padding:14px;
+    border-radius:10px;
+    margin-bottom:20px;
+    font-size:14px;
+}
+
+label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+    color:#334155;
+}
+
+input{
+    width:100%;
+    padding:14px;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    font-size:15px;
+    outline:none;
+    margin-bottom:20px;
+    transition:.3s;
+    background:#fff;
+}
+
+input:focus{
+    border-color:#3b82f6;
+    box-shadow:0 0 0 4px rgba(59,130,246,.12);
+}
+
+button{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    background:#2563eb;
+    color:#fff;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    background:#1d4ed8;
+    transform:translateY(-2px);
+}
+
+.links{
+    text-align:center;
+    margin-top:25px;
+}
+
+.links a{
+    color:#2563eb;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.links a:hover{
+    text-decoration:underline;
+}
+
+@media(max-width:480px){
+
+.otp-card{
+    padding:30px 20px;
+}
+
+.otp-card h2{
+    font-size:26px;
+}
+
+.otp-card p{
+    font-size:14px;
+}
+
+button{
+    padding:14px;
+}
+
+}
+
+/* SmartCart unified theme */
+body{background:radial-gradient(circle at 8% 90%,rgba(251,175,73,.2),transparent 28%),radial-gradient(circle at 92% 10%,rgba(103,94,238,.25),transparent 30%),#f6f7fc}.otp-card{border-color:#e3e6ef;border-radius:18px;box-shadow:0 20px 45px rgba(39,42,88,.1)}.otp-card h2{color:#4239bf}input:focus{border-color:#746ce5;box-shadow:0 0 0 4px rgba(91,81,220,.12)}button{border-radius:9px;background:#5b51dc}button:hover{background:#4239bf}.flash{border-left-color:#5b51dc;color:#4239bf;background:#f0efff}.links a{color:#5b51dc}

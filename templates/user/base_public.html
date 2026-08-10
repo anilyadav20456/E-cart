@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f7fc"><title>{% block title %}SmartCart{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+</head>
+<body>
+  <header class="navbar-header"><nav class="navbar" aria-label="Public navigation"><a href="/" class="brand-logo"><span class="logo-icon">🛒</span><span class="brand-name">SmartCart</span></a><div class="nav-links"><a href="/" class="nav-item">Home</a><a href="{{ url_for('user_products') }}" class="nav-item">Shop</a><a href="/user-login" class="nav-btn nav-btn-outline">Log in</a><a href="/user-signup" class="nav-btn">Create account</a></div></nav></header>
+  <main class="main-content">{% block content %}{% endblock %}</main>
+  <footer class="footer"><div class="footer-container"><div class="footer-text">© 2026 SmartCart. All rights reserved.</div><div class="footer-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Support</a></div></div></footer>
+</body>
+</html>

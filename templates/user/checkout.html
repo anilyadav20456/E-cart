@@ -1,0 +1,199 @@
+{% extends "user/base.html" %}
+
+{% block title %}
+Checkout | SmartCart
+{% endblock %}
+
+{% block extra_css %}
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='css/checkout.css') }}">
+
+{% endblock %}
+
+{% block content %}
+
+<section class="checkout-page">
+
+    <h1>Secure Checkout</h1>
+
+    <div class="checkout-container">
+
+        <!-- LEFT SIDE -->
+
+        <div class="checkout-form">
+
+            <h2>📍 Billing & Delivery Address</h2>
+
+            <form>
+
+                <input
+                type="text"
+                placeholder="Full Name"
+                required>
+
+                <input
+                type="email"
+                placeholder="Email Address"
+                required>
+
+                <input
+                type="text"
+                placeholder="Phone Number"
+                required>
+
+                <input
+                type="text"
+                placeholder="City"
+                required>
+
+                <input
+                type="text"
+                placeholder="State"
+                required>
+
+                <input
+                type="text"
+                placeholder="Pincode"
+                required>
+
+                <textarea
+                rows="5"
+                placeholder="Complete Delivery Address"
+                required></textarea>
+
+            </form>
+
+            <br>
+
+            <h2>💳 Payment Method</h2>
+
+            <div class="payment-methods">
+
+                <label>
+
+                    <input type="radio" name="payment" checked>
+
+                    Cash on Delivery
+
+                </label>
+
+                <label>
+
+                    <input type="radio" name="payment">
+
+                    UPI Payment
+
+                </label>
+
+                <label>
+
+                    <input type="radio" name="payment">
+
+                    Credit / Debit Card
+
+                </label>
+
+                <label>
+
+                    <input type="radio" name="payment">
+
+                    Net Banking
+
+                </label>
+
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDE -->
+
+        <div class="order-summary">
+
+            <h2>🛍 Order Summary</h2>
+
+            {% for item in cart_items %}
+
+            <div class="summary-item">
+
+                <img
+                src="{{ product_image_url(item.image) }}"
+                alt="{{ item.name }}">
+
+                <div class="summary-info">
+
+                    <h4>{{ item.name }}</h4>
+
+                    <p>Qty : {{ item.quantity }}</p>
+
+                    <span>₹{{ item.price }}</span>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+            <hr>
+
+            <div class="bill">
+
+                <div>
+
+                    <span>Subtotal</span>
+
+                    <span>₹{{ total }}</span>
+
+                </div>
+
+                <div>
+
+                    <span>Delivery</span>
+
+                    <span style="color:green;">FREE</span>
+
+                </div>
+
+                <div>
+
+                    <span>GST</span>
+
+                    <span>₹0</span>
+
+                </div>
+
+                <div>
+
+                    <span>Discount</span>
+
+                    <span style="color:green;">- ₹0</span>
+
+                </div>
+
+            </div>
+
+            <hr>
+
+            <div class="grand-total">
+
+                <span>Total</span>
+
+                <span>₹{{ total }}</span>
+
+            </div>
+
+            <form id="checkout-form" action="{{ url_for('user_pay') }}" method="post">
+                <input type="hidden" name="cart_ids" id="cart-ids-input" value="{% for item in cart_items %}{{ item.cart_id }}{% if not loop.last %},{% endif %}{% endfor %}">
+                <button id="checkout-submit" class="place-order" type="submit">
+                    🛒 Place Order
+                </button>
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+

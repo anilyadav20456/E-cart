@@ -1,0 +1,43 @@
+{% extends "user/base_public.html" %}
+
+{% block title %}Verify Reset OTP | SmartCart{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-logo">🔒</div>
+        <h2>Verify OTP</h2>
+        <p class="auth-subtitle">Enter the 6-digit OTP code sent to your email address.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-alert flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="/verify-reset-otp" method="POST" class="auth-form">
+            <div class="input-group">
+                <label for="otp">One-Time Password (OTP)</label>
+                <input
+                    id="otp"
+                    type="number"
+                    name="otp"
+                    placeholder="Enter 6-digit OTP"
+                    required
+                    autofocus
+                >
+            </div>
+
+            <button type="submit" class="auth-btn">
+                Verify OTP
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            Didn't receive the OTP? <a href="/forgot-password">Resend OTP</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

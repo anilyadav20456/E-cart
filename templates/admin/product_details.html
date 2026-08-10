@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/product_details.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="product-card">
+
+        <div class="product-image">
+
+            <img src="{{ url_for('static', filename='uploads/product_images/' + product.image) }}"
+                 alt="{{ product.name }}">
+
+        </div>
+
+        <div class="product-info">
+
+            <h1>{{ product.name }}</h1>
+
+            <p><strong>Category:</strong> {{ product.category }}</p>
+
+            <p><strong>Price:</strong> ₹{{ product.price }}</p>
+
+            <h3>Description</h3>
+
+            <p>{{ product.description }}</p>
+
+            <div class="buttons">
+
+                <a href="/admin/view-products" class="back-btn">
+                    ← Back
+                </a>
+
+                <a href="/admin/edit-product/{{ product.product_id }}" class="edit-btn">
+                    ✏ Edit Product
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
