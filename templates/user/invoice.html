@@ -194,9 +194,9 @@
             {% for it in item_list %}
             <tr>
                 <td><strong>{{ it.product_name if it.product_name else it.name }}</strong></td>
-                <td class="text-right">₹{{ it.price }}</td>
+                <td class="text-right">Rs. {{ it.price }}</td>
                 <td class="text-right">{{ it.quantity }}</td>
-                <td class="text-right"><strong>₹{{ (it.price * it.quantity) if not it.total else it.total }}</strong></td>
+                <td class="text-right"><strong>Rs. {{ (it.price * it.quantity) if not it.total else it.total }}</strong></td>
             </tr>
             {% else %}
             <tr>
@@ -210,7 +210,7 @@
         <table class="summary-table">
             <tr>
                 <td>Subtotal:</td>
-                <td class="text-right">₹{{ order.amount if order else (invoice.total_amount if invoice else '0') }}</td>
+                <td class="text-right">Rs. {{ order.amount if order else (invoice.total_amount if invoice else '0') }}</td>
             </tr>
             <tr>
                 <td>Delivery:</td>
@@ -222,7 +222,7 @@
             </tr>
             <tr>
                 <td class="total-label">Grand Total:</td>
-                <td class="total-amount">₹{{ order.amount if order else (invoice.total_amount if invoice else '0') }}</td>
+                <td class="total-amount">Rs. {{ order.amount if order else (invoice.total_amount if invoice else '0') }}</td>
             </tr>
         </table>
     </div>
