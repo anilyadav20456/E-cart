@@ -107,6 +107,9 @@
             {% if invoice %}
             <p><strong>Date & Time:</strong> {{ invoice.date }}</p>
             <p><strong>Total Amount Paid:</strong> <strong style="color:#10b981; font-size:18px;">₹{{ invoice.total_amount }}</strong></p>
+            {% if invoice.address and invoice.address != 'N/A' %}
+            <p><strong>Delivery Address:</strong> {{ invoice.address }}</p>
+            {% endif %}
             
             {% if invoice['items'] %}
             <div class="invoice-items-summary">

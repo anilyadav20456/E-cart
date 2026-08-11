@@ -17,181 +17,168 @@ href="{{ url_for('static', filename='css/checkout.css') }}">
 
     <h1>Secure Checkout</h1>
 
-    <div class="checkout-container">
+    <form id="checkout-form" action="{{ url_for('user_pay') }}" method="post">
+        <input type="hidden" name="cart_ids" id="cart-ids-input" value="{% for item in cart_items %}{{ item.cart_id }}{% if not loop.last %},{% endif %}{% endfor %}">
 
-        <!-- LEFT SIDE -->
+        <div class="checkout-container">
 
-        <div class="checkout-form">
+            <!-- LEFT SIDE -->
 
-            <h2>📍 Billing & Delivery Address</h2>
+            <div class="checkout-form">
 
-            <form>
+                <h2>📍 Billing & Delivery Address</h2>
 
-                <input
-                type="text"
-                placeholder="Full Name"
-                required>
+                <div class="address-fields">
 
-                <input
-                type="email"
-                placeholder="Email Address"
-                required>
+                    <input
+                    type="text"
+                    name="fullname"
+                    placeholder="Full Name"
+                    value="{{ user.fullname if user else '' }}"
+                    required>
 
-                <input
-                type="text"
-                placeholder="Phone Number"
-                required>
+                    <input
+                    type="email"
+                    name="email"
+                    placeholder="Email Address"
+                    value="{{ user.email if user else '' }}"
+                    required>
 
-                <input
-                type="text"
-                placeholder="City"
-                required>
+                    <input
+                    type="text"
+                    name="phone"
+                    placeholder="Phone Number"
+                    value="{{ user.phone if user else '' }}"
+                    required>
 
-                <input
-                type="text"
-                placeholder="State"
-                required>
+                    <input
+                    type="text"
+                    name="city"
+                    placeholder="City"
+                    required>
 
-                <input
-                type="text"
-                placeholder="Pincode"
-                required>
+                    <input
+                    type="text"
+                    name="state"
+                    placeholder="State"
+                    required>
 
-                <textarea
-                rows="5"
-                placeholder="Complete Delivery Address"
-                required></textarea>
+                    <input
+                    type="text"
+                    name="pincode"
+                    placeholder="Pincode"
+                    required>
 
-            </form>
+                    <textarea
+                    name="address"
+                    rows="4"
+                    placeholder="Complete Delivery Address (House/Flat No., Street, Landmark)"
+                    required>{{ user.address if user and user.address else '' }}</textarea>
 
-            <br>
+                </div>
 
-            <h2>💳 Payment Method</h2>
+                <br>
 
-            <div class="payment-methods">
+                <h2>💳 Payment Method</h2>
 
-                <label>
+                <div class="payment-methods">
 
-                    <input type="radio" name="payment" checked>
+                    <label>
 
-                    Cash on Delivery
+                        <input type="radio" name="payment" checked>
 
-                </label>
+                        Online Payment / Cards / UPI / COD
 
-                <label>
-
-                    <input type="radio" name="payment">
-
-                    UPI Payment
-
-                </label>
-
-                <label>
-
-                    <input type="radio" name="payment">
-
-                    Credit / Debit Card
-
-                </label>
-
-                <label>
-
-                    <input type="radio" name="payment">
-
-                    Net Banking
-
-                </label>
-
-            </div>
-
-        </div>
-
-        <!-- RIGHT SIDE -->
-
-        <div class="order-summary">
-
-            <h2>🛍 Order Summary</h2>
-
-            {% for item in cart_items %}
-
-            <div class="summary-item">
-
-                <img
-                src="{{ product_image_url(item.image) }}"
-                alt="{{ item.name }}">
-
-                <div class="summary-info">
-
-                    <h4>{{ item.name }}</h4>
-
-                    <p>Qty : {{ item.quantity }}</p>
-
-                    <span>₹{{ item.price }}</span>
+                    </label>
 
                 </div>
 
             </div>
 
-            {% endfor %}
+            <!-- RIGHT SIDE -->
 
-            <hr>
+            <div class="order-summary">
 
-            <div class="bill">
+                <h2>🛍 Order Summary</h2>
 
-                <div>
+                {% for item in cart_items %}
 
-                    <span>Subtotal</span>
+                <div class="summary-item">
+
+                    <img
+                    src="{{ product_image_url(item.image) }}"
+                    alt="{{ item.name }}">
+
+                    <div class="summary-info">
+
+                        <h4>{{ item.name }}</h4>
+
+                        <p>Qty : {{ item.quantity }}</p>
+
+                        <span>₹{{ item.price }}</span>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+                <hr>
+
+                <div class="bill">
+
+                    <div>
+
+                        <span>Subtotal</span>
+
+                        <span>₹{{ total }}</span>
+
+                    </div>
+
+                    <div>
+
+                        <span>Delivery</span>
+
+                        <span style="color:green;">FREE</span>
+
+                    </div>
+
+                    <div>
+
+                        <span>GST</span>
+
+                        <span>₹0</span>
+
+                    </div>
+
+                    <div>
+
+                        <span>Discount</span>
+
+                        <span style="color:green;">- ₹0</span>
+
+                    </div>
+
+                </div>
+
+                <hr>
+
+                <div class="grand-total">
+
+                    <span>Total</span>
 
                     <span>₹{{ total }}</span>
 
                 </div>
 
-                <div>
-
-                    <span>Delivery</span>
-
-                    <span style="color:green;">FREE</span>
-
-                </div>
-
-                <div>
-
-                    <span>GST</span>
-
-                    <span>₹0</span>
-
-                </div>
-
-                <div>
-
-                    <span>Discount</span>
-
-                    <span style="color:green;">- ₹0</span>
-
-                </div>
-
-            </div>
-
-            <hr>
-
-            <div class="grand-total">
-
-                <span>Total</span>
-
-                <span>₹{{ total }}</span>
-
-            </div>
-
-            <form id="checkout-form" action="{{ url_for('user_pay') }}" method="post">
-                <input type="hidden" name="cart_ids" id="cart-ids-input" value="{% for item in cart_items %}{{ item.cart_id }}{% if not loop.last %},{% endif %}{% endfor %}">
                 <button id="checkout-submit" class="place-order" type="submit">
                     🛒 Place Order
                 </button>
-            </form>
+
+            </div>
 
         </div>
-
-    </div>
+    </form>
 
 </section>
 

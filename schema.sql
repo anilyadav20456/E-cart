@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
     email TEXT UNIQUE NOT NULL,
     phone TEXT,
     password TEXT NOT NULL,
-    profile_pic TEXT
+    profile_pic TEXT,
+    address TEXT
 );
 
 -- 2. Admin Table
@@ -51,6 +52,7 @@ CREATE TABLE IF NOT EXISTS orders (
     amount REAL NOT NULL,
     payment_status TEXT DEFAULT 'Pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    shipping_address TEXT,
     FOREIGN KEY (user_id) REFERENCES users (id)
 );
 

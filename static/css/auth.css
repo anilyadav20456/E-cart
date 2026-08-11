@@ -38,6 +38,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
 }
 
 .brand-logo {
@@ -53,6 +54,25 @@ body {
 
 .brand-name span {
   color: var(--primary);
+}
+
+.mobile-nav-toggle {
+  display: none;
+  background: #f1f5f9;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--text-main);
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s ease;
+}
+
+.mobile-nav-toggle:hover {
+  background: #e2e8f0;
 }
 
 .nav-links {
@@ -113,6 +133,13 @@ body {
   border-radius: 20px;
   padding: 36px 32px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 24px 18px;
+    border-radius: 16px;
+  }
 }
 
 .auth-logo {
@@ -261,3 +288,59 @@ body {
 .footer-links a:hover {
   color: var(--primary);
 }
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 16px;
+  }
+
+  .mobile-nav-toggle {
+    display: flex;
+  }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 64px;
+    left: 0;
+    right: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+    gap: 12px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    z-index: 1000;
+    align-items: stretch;
+  }
+
+  .nav-links.show {
+    display: flex;
+  }
+
+  .nav-item {
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .nav-item:hover {
+    background: #f1f5f9;
+  }
+
+  .nav-btn {
+    text-align: center;
+    padding: 11px;
+    width: 100%;
+    margin-top: 4px;
+    display: block;
+  }
+
+  .footer-container {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+}
+

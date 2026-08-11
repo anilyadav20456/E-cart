@@ -150,13 +150,17 @@
         <tr>
             <td class="details-col" width="50%">
                 <div class="details-box">
-                    <h3>Billed To</h3>
-                    {% if order and order.user_id %}
-                    <p><strong>User ID:</strong> {{ order.user_id }}</p>
-                    {% endif %}
+                    <h3>Billed To & Shipping Address</h3>
                     {% if invoice and invoice.user_name %}
                     <p><strong>Name:</strong> {{ invoice.user_name }}</p>
                     <p><strong>Email:</strong> {{ invoice.user_email }}</p>
+                    {% if invoice.user_phone %}
+                    <p><strong>Phone:</strong> {{ invoice.user_phone }}</p>
+                    {% endif %}
+                    <p><strong>Address:</strong> {{ invoice.address if (invoice.address and invoice.address != 'N/A') else (order.shipping_address if (order and order.shipping_address) else 'N/A') }}</p>
+                    {% elif order %}
+                    <p><strong>User ID:</strong> #{{ order.user_id }}</p>
+                    <p><strong>Address:</strong> {{ order.shipping_address if order.shipping_address else 'N/A' }}</p>
                     {% endif %}
                     <p><strong>Status:</strong> Success / Paid</p>
                 </div>

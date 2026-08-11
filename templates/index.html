@@ -11,10 +11,26 @@
   <div class="index-wrapper">
     <header class="index-navbar">
       <a href="/" class="index-logo">Smart<span>Cart</span></a>
-      <div class="index-nav-links">
-        <a href="{{ url_for('user_products') }}">Products</a>
-        <a href="{{ url_for('user_login') }}">Customer Login</a>
-        <a href="{{ url_for('admin_login') }}" class="admin-link">Admin</a>
+
+      <!-- 3-Dots Toggle Button for Mobile Navigation -->
+      <button class="nav-toggle-btn" id="navToggleBtn" type="button" aria-label="Toggle Navigation Menu" aria-expanded="false">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+          <circle cx="12" cy="5" r="2.2" />
+          <circle cx="12" cy="12" r="2.2" />
+          <circle cx="12" cy="19" r="2.2" />
+        </svg>
+      </button>
+
+      <div class="index-nav-links" id="indexNavLinks">
+        <a href="{{ url_for('user_products') }}">
+          <span class="nav-icon">📦</span> Products
+        </a>
+        <a href="{{ url_for('user_login') }}">
+          <span class="nav-icon">👤</span> Customer Login
+        </a>
+        <a href="{{ url_for('admin_login') }}" class="admin-link">
+          <span class="nav-icon">⚙️</span> Admin
+        </a>
       </div>
     </header>
 
@@ -50,5 +66,40 @@
       <p>© 2026 SmartCart. All rights reserved.</p>
     </footer>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const toggleBtn = document.getElementById('navToggleBtn');
+      const navLinks = document.getElementById('indexNavLinks');
+
+      if (toggleBtn && navLinks) {
+        toggleBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const isShown = navLinks.classList.contains('show');
+          navLinks.classList.toggle('show');
+          toggleBtn.classList.toggle('active');
+          toggleBtn.setAttribute('aria-expanded', !isShown);
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+          if (!navLinks.contains(e.target) && !toggleBtn.contains(e.target)) {
+            navLinks.classList.remove('show');
+            toggleBtn.classList.remove('active');
+            toggleBtn.setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        // Close menu on Escape key press
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') {
+            navLinks.classList.remove('show');
+            toggleBtn.classList.remove('active');
+            toggleBtn.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>

@@ -7,12 +7,14 @@
 <style>
     .profile-card-wrapper {
         max-width: 800px;
+        width: min(800px, 95%);
         margin: 40px auto;
         background: #ffffff;
         padding: 40px;
         border-radius: 20px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.06);
         border: 1px solid #e2e8f0;
+        box-sizing: border-box;
     }
 
     .profile-header {
@@ -27,6 +29,7 @@
     .profile-avatar {
         width: 70px;
         height: 70px;
+        min-width: 70px;
         border-radius: 50%;
         background: #2563eb;
         color: #ffffff;
@@ -36,12 +39,20 @@
         font-size: 28px;
         font-weight: 700;
         box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+        flex-shrink: 0;
+    }
+
+    .profile-header-info {
+        min-width: 0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
 
     .profile-header-info h1 {
         font-size: 24px;
         color: #0f172a;
         margin-bottom: 4px;
+        word-break: break-word;
     }
 
     .profile-header-info p {
@@ -53,12 +64,15 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 20px;
+        width: 100%;
     }
 
     .form-group {
         display: flex;
         flex-direction: column;
         gap: 8px;
+        min-width: 0;
+        width: 100%;
     }
 
     .form-group.full-width {
@@ -69,18 +83,30 @@
         font-size: 14px;
         font-weight: 600;
         color: #334155;
+        word-break: break-word;
     }
 
-    .form-group input {
+    .form-group input, .form-group textarea {
+        width: 100%;
+        box-sizing: border-box;
+        min-width: 0;
         padding: 14px 16px;
         border: 1px solid #cbd5e1;
         border-radius: 10px;
         font-size: 15px;
         outline: none;
         transition: 0.2s ease;
+        background: #ffffff;
+        color: #0f172a;
+        font-family: inherit;
     }
 
-    .form-group input:focus {
+    .form-group textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    .form-group input:focus, .form-group textarea:focus {
         border-color: #2563eb;
         box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
     }
@@ -90,6 +116,7 @@
         display: flex;
         gap: 15px;
         align-items: center;
+        flex-wrap: wrap;
     }
 
     .btn-save {
@@ -102,6 +129,10 @@
         font-weight: 600;
         cursor: pointer;
         transition: 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
     }
 
     .btn-save:hover {
@@ -117,11 +148,71 @@
         font-size: 15px;
         font-weight: 600;
         transition: 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
     }
 
     .btn-orders:hover {
         background: #e2e8f0;
         color: #0f172a;
+    }
+
+    @media (max-width: 768px) {
+        .profile-card-wrapper {
+            margin: 24px auto;
+            padding: 28px 20px;
+            border-radius: 16px;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .profile-card-wrapper {
+            margin: 16px auto;
+            padding: 20px 16px;
+            width: min(800px, 95%);
+        }
+
+        .profile-header {
+            gap: 14px;
+            padding-bottom: 18px;
+            margin-bottom: 20px;
+        }
+
+        .profile-avatar {
+            width: 58px;
+            height: 58px;
+            min-width: 58px;
+            font-size: 22px;
+        }
+
+        .profile-header-info h1 {
+            font-size: 20px;
+        }
+
+        .profile-header-info p {
+            font-size: 13px;
+        }
+
+        .profile-form-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .profile-actions {
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px;
+            width: 100%;
+        }
+
+        .btn-save, .btn-orders {
+            width: 100%;
+            text-align: center;
+            padding: 13px 20px;
+            font-size: 15px;
+        }
     }
 </style>
 {% endblock %}
@@ -158,6 +249,11 @@
             <div class="form-group">
                 <label for="password">New Password (leave blank to keep current)</label>
                 <input type="password" id="password" name="password" placeholder="••••••••">
+            </div>
+
+            <div class="form-group full-width">
+                <label for="address">Delivery / Shipping Address</label>
+                <textarea id="address" name="address" rows="3" placeholder="Enter your full delivery address (House No, Street, City, State, Pincode)">{{ user.address or '' }}</textarea>
             </div>
         </div>
 

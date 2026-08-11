@@ -6,8 +6,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
 <style>
     .success-container {
-        width: 70%;
-        max-width: 800px;
+        width: min(800px, 95%);
         margin: 40px auto;
         padding: 30px;
         text-align: center;
@@ -15,12 +14,14 @@
         border: 1px solid #e2e8f0;
         border-radius: 16px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        box-sizing: border-box;
     }
 
     .success-container h2 {
         color: #10b981;
         font-size: 28px;
         margin-bottom: 8px;
+        word-break: break-word;
     }
 
     .order-details {
@@ -31,16 +32,21 @@
         border-radius: 12px;
         border: 1px solid #e2e8f0;
         line-height: 1.8;
+        word-break: break-word;
+        overflow-wrap: break-word;
     }
 
     .order-details p {
         color: #334155;
         font-size: 15px;
+        margin-bottom: 6px;
+        word-break: break-word;
     }
 
     .items-list {
         margin-top: 25px;
         text-align: left;
+        width: 100%;
     }
 
     .items-list h3 {
@@ -49,32 +55,40 @@
         font-size: 18px;
     }
 
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        background: #ffffff;
+    }
+
     .items-list table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 10px;
+        min-width: 400px;
     }
 
-    .items-list table, th, td {
+    .items-list table th,
+    .items-list table td {
         border: 1px solid #e2e8f0;
+        padding: 12px 14px;
+        font-size: 14px;
+        text-align: left;
     }
 
-    th {
+    .items-list th {
         background: #f1f5f9;
         color: #475569;
         font-weight: 600;
-    }
-
-    th, td {
-        padding: 12px 15px;
-        font-size: 14px;
-        text-align: left;
+        white-space: nowrap;
     }
 
     .btn-group {
         margin-top: 30px;
         display: flex;
-        gap: 15px;
+        gap: 12px;
         justify-content: center;
         flex-wrap: wrap;
     }
@@ -90,6 +104,7 @@
         transition: 0.2s ease;
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 6px;
     }
 
@@ -104,6 +119,53 @@
 
     .btn-secondary:hover {
         background-color: #059669;
+    }
+
+    @media (max-width: 640px) {
+        .success-container {
+            width: min(800px, 95%);
+            margin: 16px auto;
+            padding: 20px 14px;
+            border-radius: 14px;
+        }
+
+        .success-container h2 {
+            font-size: 22px;
+        }
+
+        .order-details {
+            padding: 14px 12px;
+            font-size: 14px;
+            margin-top: 18px;
+        }
+
+        .order-details p {
+            font-size: 14px;
+        }
+
+        .items-list {
+            margin-top: 18px;
+        }
+
+        .items-list table th,
+        .items-list table td {
+            padding: 10px 10px;
+            font-size: 13px;
+        }
+
+        .btn-group {
+            flex-direction: column;
+            width: 100%;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            width: 100%;
+            text-align: center;
+            padding: 12px 16px;
+            font-size: 14px;
+        }
     }
 </style>
 {% endblock %}
@@ -120,31 +182,36 @@
         <p><strong>Razorpay Order ID:</strong> <span style="font-family: monospace; color:#64748b;">{{ order.razorpay_order_id }}</span></p>
         <p><strong>Amount Paid:</strong> <strong style="color:#10b981; font-size:17px;">₹{{ order.amount }}</strong></p>
         <p><strong>Order Date:</strong> {{ order.created_at }}</p>
+        {% if order.shipping_address or (invoice and invoice.address and invoice.address != 'N/A') %}
+        <p><strong>Delivery Address:</strong> {{ order.shipping_address if order.shipping_address else invoice.address }}</p>
+        {% endif %}
     </div>
 
     <div class="items-list">
         <h3>Order Summary</h3>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Qty</th>
-                    <th>Price (₹)</th>
-                    <th>Subtotal (₹)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for it in items %}
-                <tr>
-                    <td><strong>{{ it.product_name }}</strong></td>
-                    <td>{{ it.quantity }}</td>
-                    <td>₹{{ it.price }}</td>
-                    <td><strong>₹{{ it.price * it.quantity }}</strong></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Qty</th>
+                        <th>Price (₹)</th>
+                        <th>Subtotal (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for it in items %}
+                    <tr>
+                        <td><strong>{{ it.product_name }}</strong></td>
+                        <td>{{ it.quantity }}</td>
+                        <td>₹{{ it.price }}</td>
+                        <td><strong>₹{{ it.price * it.quantity }}</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <div class="btn-group">

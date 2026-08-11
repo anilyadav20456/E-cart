@@ -839,6 +839,10 @@ def checkout():
         WHERE cart.user_id=%s AND cart.cart_id IN ({placeholders})
     """, [session["user_id"], *selected_cart_ids])
     cart_items = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM users WHERE id=%s", (session["user_id"],))
+    user_info = cursor.fetchone() or {}
+
     cursor.close()
     conn.close()
 
@@ -847,7 +851,7 @@ def checkout():
         return redirect(url_for("view_cart"))
 
     total = sum(item["price"] * item["quantity"] for item in cart_items)
-    return render_template("user/checkout.html", cart_items=cart_items, total=total)
+    return render_template("user/checkout.html", cart_items=cart_items, total=total, user=user_info)
 
 
 # =================================================================
@@ -861,6 +865,21 @@ def user_pay():
         return redirect('/user-login')
 
     cart_ids = request.form.get("cart_ids", "") or request.args.get("cart_ids", "")
+    address = request.form.get("address", "").strip()
+    city = request.form.get("city", "").strip()
+    state = request.form.get("state", "").strip()
+    pincode = request.form.get("pincode", "").strip()
+
+    full_address = address
+    location_parts = [p for p in [city, state, pincode] if p]
+    if location_parts:
+        if full_address:
+            full_address += ", " + ", ".join(location_parts)
+        else:
+            full_address = ", ".join(location_parts)
+
+    session['checkout_address'] = full_address
+
     selected_cart_ids = []
     if cart_ids:
         try:
@@ -870,6 +889,13 @@ def user_pay():
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
+
+    if full_address:
+        try:
+            cursor.execute("UPDATE users SET address=%s WHERE id=%s AND (address IS NULL OR address='')", (full_address, session["user_id"]))
+            conn.commit()
+        except Exception:
+            pass
 
     if selected_cart_ids:
         placeholders = ", ".join(["%s"] * len(selected_cart_ids))
@@ -1009,6 +1035,7 @@ def payment_success():
         'user_name': user_info.get('fullname') or user_info.get('name') or session.get('user_name', 'Customer'),
         'user_email': user_info.get('email') or session.get('user_email', ''),
         'user_phone': user_info.get('phone') or 'N/A',
+        'address': session.get('checkout_address') or user_info.get('address') or 'N/A',
         'items': invoice_items,
         'total_amount': total_amount
     }
@@ -1109,11 +1136,21 @@ def verify_payment():
 
     total_amount = sum(item['price'] * item['quantity'] for item in cart_items)
 
+    shipping_address = session.get('checkout_address', '')
+    if not shipping_address:
+        try:
+            cursor.execute("SELECT address FROM users WHERE id=%s", (user_id,))
+            u_row = cursor.fetchone()
+            if u_row and u_row.get('address'):
+                shipping_address = u_row['address']
+        except Exception:
+            pass
+
     try:
         cursor.execute("""
-            INSERT INTO orders (user_id, razorpay_order_id, razorpay_payment_id, amount, payment_status)
-            VALUES (%s, %s, %s, %s, %s)
-        """, (user_id, razorpay_order_id, razorpay_payment_id, total_amount, 'paid'))
+            INSERT INTO orders (user_id, razorpay_order_id, razorpay_payment_id, amount, payment_status, shipping_address)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (user_id, razorpay_order_id, razorpay_payment_id, total_amount, 'paid', shipping_address))
 
         order_db_id = cursor.lastrowid
 
@@ -1192,6 +1229,7 @@ def order_success(order_db_id):
         'user_name': user_info.get('fullname') or user_info.get('name') or session.get('user_name', 'Customer'),
         'user_email': user_info.get('email') or session.get('user_email', ''),
         'user_phone': user_info.get('phone') or 'N/A',
+        'address': order.get('shipping_address') or user_info.get('address') or session.get('checkout_address') or 'N/A',
         'items': [{'name': item['product_name'], 'price': item['price'], 'quantity': item['quantity'], 'total': item['price'] * item['quantity']} for item in items],
         'total_amount': order['amount']
     }
@@ -1240,6 +1278,9 @@ def download_invoice(order_id):
     cursor.execute("SELECT * FROM order_items WHERE order_id=%s", (order_id,))
     items = cursor.fetchall()
 
+    cursor.execute("SELECT * FROM users WHERE id=%s", (session['user_id'],))
+    user_info = cursor.fetchone() or {}
+
     cursor.close()
     conn.close()
 
@@ -1247,7 +1288,22 @@ def download_invoice(order_id):
         flash("Order not found.", "danger")
         return redirect('/user/my-orders')
 
-    html = render_template("user/invoice.html", order=order, items=items)
+    invoice_date = order['created_at'].strftime("%d %B %Y, %I:%M %p") if isinstance(order['created_at'], datetime) else str(order['created_at'])
+
+    invoice_data = {
+        'invoice_no': f"INV-{order_id:04d}",
+        'payment_id': order.get('razorpay_payment_id', 'N/A'),
+        'order_id': order.get('razorpay_order_id', 'N/A'),
+        'date': invoice_date,
+        'user_name': user_info.get('fullname') or user_info.get('name') or session.get('user_name', 'Customer'),
+        'user_email': user_info.get('email') or session.get('user_email', ''),
+        'user_phone': user_info.get('phone') or 'N/A',
+        'address': order.get('shipping_address') or user_info.get('address') or session.get('checkout_address') or 'N/A',
+        'items': [{'name': item['product_name'], 'price': item['price'], 'quantity': item['quantity'], 'total': item['price'] * item['quantity']} for item in items],
+        'total_amount': order['amount']
+    }
+
+    html = render_template("user/invoice.html", order=order, items=items, invoice=invoice_data)
 
     pdf = generate_pdf(html)
     if not pdf:
@@ -1280,6 +1336,7 @@ def user_profile():
         fullname = request.form.get('fullname', '').strip()
         email = request.form.get('email', '').strip().lower()
         phone = request.form.get('phone', '').strip()
+        address = request.form.get('address', '').strip()
         password = request.form.get('password', '').strip()
 
         if not fullname or not email:
@@ -1290,15 +1347,15 @@ def user_profile():
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
             cursor.execute("""
                 UPDATE users
-                SET fullname=%s, email=%s, phone=%s, password=%s
+                SET fullname=%s, email=%s, phone=%s, address=%s, password=%s
                 WHERE id=%s
-            """, (fullname, email, phone, hashed_password, user_id))
+            """, (fullname, email, phone, address, hashed_password, user_id))
         else:
             cursor.execute("""
                 UPDATE users
-                SET fullname=%s, email=%s, phone=%s
+                SET fullname=%s, email=%s, phone=%s, address=%s
                 WHERE id=%s
-            """, (fullname, email, phone, user_id))
+            """, (fullname, email, phone, address, user_id))
 
         conn.commit()
         session['user_name'] = fullname
