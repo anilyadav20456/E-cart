@@ -121,12 +121,34 @@ class SQLiteConnWrapper:
     def commit(self):
         self.conn.commit()
 
+    def rollback(self):
+        self.conn.rollback()
+
     def close(self):
         self.conn.close()
 
+def _ensure_sqlite_columns(conn_wrapper):
+    try:
+        cur = conn_wrapper.cursor(dictionary=True)
+        cur.execute("PRAGMA table_info(users)")
+        u_cols = [r['name'] for r in cur.fetchall() if isinstance(r, dict) and 'name' in r]
+        if 'address' not in u_cols:
+            cur.execute("ALTER TABLE users ADD COLUMN address TEXT")
+
+        cur.execute("PRAGMA table_info(orders)")
+        o_cols = [r['name'] for r in cur.fetchall() if isinstance(r, dict) and 'name' in r]
+        if 'shipping_address' not in o_cols:
+            cur.execute("ALTER TABLE orders ADD COLUMN shipping_address TEXT")
+        conn_wrapper.commit()
+        cur.close()
+    except Exception:
+        pass
+
 def get_db_connection():
     try:
-        return SQLiteConnWrapper(DEFAULT_DB_PATH)
+        wrapper = SQLiteConnWrapper(DEFAULT_DB_PATH)
+        _ensure_sqlite_columns(wrapper)
+        return wrapper
     except Exception:
         return mysql.connector.connect(
             host=config.DB_HOST,
