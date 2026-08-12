@@ -1,23 +1,87 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>SmartCart Invoice</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCart Invoice - INV-{{ order.order_id if order else (invoice.order_id if invoice else '1001') }}</title>
     <style>
         @page {
             size: A4;
             margin: 20px;
         }
         body {
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
             color: #1e293b;
             font-size: 13px;
-            line-height: 1.4;
+            line-height: 1.5;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
         }
         .invoice-wrapper {
-            width: 100%;
-            margin: 0 auto;
+            max-width: 800px;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-sizing: border-box;
         }
+        
+        /* Interactive Toolbar (Hidden during Print / PDF generation) */
+        .invoice-actions-bar {
+            max-width: 800px;
+            margin: 20px auto 0 auto;
+            padding: 12px 20px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .invoice-actions-bar .btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+        .btn-print {
+            background-color: #2563eb;
+            color: #ffffff;
+        }
+        .btn-print:hover {
+            background-color: #1d4ed8;
+        }
+        .btn-download {
+            background-color: #10b981;
+            color: #ffffff;
+        }
+        .btn-download:hover {
+            background-color: #059669;
+        }
+        .btn-back {
+            background-color: #64748b;
+            color: #ffffff;
+        }
+        .btn-back:hover {
+            background-color: #475569;
+        }
+
         .invoice-header {
             width: 100%;
             border-bottom: 2px solid #2563eb;
@@ -45,8 +109,10 @@
             color: #166534;
             font-size: 11px;
             font-weight: bold;
-            padding: 3px 8px;
-            border-radius: 10px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 4px;
         }
         .invoice-details {
             width: 100%;
@@ -59,11 +125,18 @@
             font-size: 12px;
             text-transform: uppercase;
             color: #64748b;
-            margin-bottom: 5px;
+            margin-top: 0;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
         }
         .details-box p {
-            margin: 3px 0;
+            margin: 4px 0;
             font-size: 13px;
+            word-break: break-word;
+        }
+        .invoice-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
         }
         .invoice-table {
             width: 100%;
@@ -73,7 +146,7 @@
         .invoice-table th {
             background-color: #f1f5f9;
             color: #334155;
-            padding: 8px 10px;
+            padding: 10px 12px;
             font-size: 12px;
             font-weight: bold;
             text-align: left;
@@ -81,7 +154,7 @@
             border-bottom: 1px solid #cbd5e1;
         }
         .invoice-table td {
-            padding: 10px;
+            padding: 10px 12px;
             border-bottom: 1px solid #e2e8f0;
             font-size: 13px;
         }
@@ -94,13 +167,14 @@
         }
         .summary-table {
             width: 280px;
-            float: right;
+            margin-left: auto;
             border-collapse: collapse;
             background-color: #f8fafc;
             border: 1px solid #e2e8f0;
+            border-radius: 8px;
         }
         .summary-table td {
-            padding: 6px 10px;
+            padding: 8px 12px;
             font-size: 13px;
         }
         .summary-table td.total-label {
@@ -127,9 +201,95 @@
             color: #64748b;
             margin-top: 30px;
         }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 640px) {
+            body {
+                background-color: #ffffff;
+            }
+            .invoice-actions-bar {
+                margin: 0;
+                border-radius: 0;
+                padding: 10px 14px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .invoice-actions-bar .btn-group {
+                flex-direction: column;
+                width: 100%;
+            }
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 12px;
+                box-sizing: border-box;
+            }
+            .invoice-wrapper {
+                margin: 0;
+                padding: 16px 14px;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            .brand-logo {
+                font-size: 22px;
+            }
+            .invoice-title {
+                font-size: 16px;
+            }
+            .details-col {
+                display: block;
+                width: 100% !important;
+                text-align: left !important;
+                margin-bottom: 12px;
+            }
+            .summary-table {
+                width: 100%;
+                margin-left: 0;
+            }
+        }
+
+        /* Print Media Styles */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: #ffffff;
+            }
+            .invoice-wrapper {
+                margin: 0;
+                padding: 0;
+                box-shadow: none;
+                max-width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
+
+<!-- Top Action Toolbar for Screen Viewing (Hidden when Printing/Generating PDF) -->
+<div class="invoice-actions-bar no-print">
+    <div style="font-weight: 600; color: #1e293b; font-size: 15px;">
+        📄 Tax Invoice #{{ order.order_id if order else (invoice.invoice_no if invoice else '') }}
+    </div>
+    <div class="btn-group">
+        <button type="button" onclick="window.print()" class="action-btn btn-print">
+            🖨️ Print / Save as PDF
+        </button>
+        {% set ord_id = order.order_id if order else (invoice.order_id if (invoice and invoice.order_id) else '') %}
+        {% if ord_id and (ord_id|string).isdigit() %}
+        <a href="/user/download-invoice/{{ ord_id }}?mode=attachment" target="_blank" class="action-btn btn-download">
+            📥 Download PDF File
+        </a>
+        <a href="/user/download-invoice/{{ ord_id }}?mode=inline" target="_blank" class="action-btn" style="background:#0284c7; color:#fff;">
+            👁️ Open PDF Viewer
+        </a>
+        {% endif %}
+        <a href="/user/my-orders" class="action-btn btn-back">
+            📦 My Orders
+        </a>
+    </div>
+</div>
 
 <div class="invoice-wrapper">
 
@@ -180,31 +340,33 @@
         </tr>
     </table>
 
-    <table class="invoice-table">
-        <thead>
-            <tr>
-                <th>Item Description</th>
-                <th class="text-right">Unit Price</th>
-                <th class="text-right">Qty</th>
-                <th class="text-right">Total Amount</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% set item_list = items if items else (invoice['items'] if invoice and invoice['items'] else []) %}
-            {% for it in item_list %}
-            <tr>
-                <td><strong>{{ it.product_name if it.product_name else it.name }}</strong></td>
-                <td class="text-right">Rs. {{ it.price }}</td>
-                <td class="text-right">{{ it.quantity }}</td>
-                <td class="text-right"><strong>Rs. {{ (it.price * it.quantity) if not it.total else it.total }}</strong></td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="4" style="text-align:center; color:#64748b;">No items found.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="invoice-table-wrapper">
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th>Item Description</th>
+                    <th class="text-right">Unit Price</th>
+                    <th class="text-right">Qty</th>
+                    <th class="text-right">Total Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set item_list = items if items else (invoice['items'] if invoice and invoice['items'] else []) %}
+                {% for it in item_list %}
+                <tr>
+                    <td><strong>{{ it.product_name if it.product_name else it.name }}</strong></td>
+                    <td class="text-right">Rs. {{ it.price }}</td>
+                    <td class="text-right">{{ it.quantity }}</td>
+                    <td class="text-right"><strong>Rs. {{ (it.price * it.quantity) if not it.total else it.total }}</strong></td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" style="text-align:center; color:#64748b;">No items found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
     <div class="invoice-summary">
         <table class="summary-table">

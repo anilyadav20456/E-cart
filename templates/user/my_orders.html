@@ -157,10 +157,13 @@
             </div>
 
             <div class="order-actions">
-                <a href="/user/download-invoice/{{ order.order_id }}" class="view-btn" style="background:#10b981;">
-                    📥 Download Invoice
+                <a href="/user/invoice/{{ order.order_id }}" class="view-btn" style="background:#2563eb;" target="_blank">
+                    📄 View Invoice
                 </a>
-                <a href="/user/order-success/{{ order.order_id }}" class="view-btn">
+                <a href="/user/download-invoice/{{ order.order_id }}?mode=attachment" class="view-btn" style="background:#10b981;" target="_blank" download="invoice_{{ order.order_id }}.pdf">
+                    📥 Download PDF
+                </a>
+                <a href="/user/order-success/{{ order.order_id }}" class="view-btn" style="background:#475569;">
                     View Details
                 </a>
             </div>

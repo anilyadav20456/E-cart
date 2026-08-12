@@ -215,8 +215,8 @@
     </div>
 
     <div class="btn-group">
-        <a href="/user/download-invoice/{{ order.order_id }}" class="btn">📥 Download Invoice (PDF)</a>
-        <a href="/user/invoice" class="btn" target="_blank" style="background:#64748b;">📄 View Invoice</a>
+        <a href="/user/download-invoice/{{ order.order_id }}?mode=attachment" class="btn" target="_blank" download="invoice_{{ order.order_id }}.pdf">📥 Download Invoice (PDF)</a>
+        <a href="/user/invoice/{{ order.order_id }}" class="btn" target="_blank" style="background:#64748b;">📄 View Invoice</a>
         <a href="/user/my-orders" class="btn btn-secondary">📦 View My Orders</a>
         <a href="/user/products" class="btn" style="background:#334155;">🛍️ Continue Shopping</a>
     </div>

@@ -1073,19 +1073,63 @@ def payment_success():
 
 
 # =================================================================
-# INVOICE VIEW ROUTE
+# INVOICE VIEW ROUTES
 # =================================================================
 @app.route('/user/invoice')
-def user_invoice():
+@app.route('/user/invoice/<int:order_id>')
+def user_invoice(order_id=None):
     if 'user_id' not in session:
         flash("Please login first!", "danger")
         return redirect('/user-login')
 
-    invoice = session.get('last_invoice')
-    if not invoice:
-        flash("No recent invoice found.", "warning")
-        return redirect('/products')
+    user_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
 
+    order = None
+    if order_id:
+        cursor.execute("SELECT * FROM orders WHERE order_id=%s AND user_id=%s", (order_id, user_id))
+        order = cursor.fetchone()
+    else:
+        # Fallback to latest order if order_id is not specified
+        cursor.execute("SELECT * FROM orders WHERE user_id=%s ORDER BY order_id DESC LIMIT 1", (user_id,))
+        order = cursor.fetchone()
+
+    if not order and not session.get('last_invoice'):
+        cursor.close()
+        conn.close()
+        flash("No order or invoice found.", "warning")
+        return redirect('/user/my-orders')
+
+    if order:
+        cursor.execute("SELECT * FROM order_items WHERE order_id=%s", (order['order_id'],))
+        items = cursor.fetchall()
+
+        cursor.execute("SELECT * FROM users WHERE id=%s", (user_id,))
+        user_info = cursor.fetchone() or {}
+
+        cursor.close()
+        conn.close()
+
+        invoice_date = order['created_at'].strftime("%d %B %Y, %I:%M %p") if isinstance(order['created_at'], datetime) else str(order['created_at'])
+
+        invoice_data = {
+            'invoice_no': f"INV-{order['order_id']:04d}",
+            'payment_id': order.get('razorpay_payment_id', 'N/A'),
+            'order_id': order.get('razorpay_order_id', 'N/A'),
+            'date': invoice_date,
+            'user_name': user_info.get('fullname') or user_info.get('name') or session.get('user_name', 'Customer'),
+            'user_email': user_info.get('email') or session.get('user_email', ''),
+            'user_phone': user_info.get('phone') or 'N/A',
+            'address': order.get('shipping_address') or user_info.get('address') or session.get('checkout_address') or 'N/A',
+            'items': [{'name': item['product_name'], 'price': item['price'], 'quantity': item['quantity'], 'total': item['price'] * item['quantity']} for item in items],
+            'total_amount': order['amount']
+        }
+        return render_template("user/invoice.html", order=order, items=items, invoice=invoice_data)
+
+    cursor.close()
+    conn.close()
+    invoice = session.get('last_invoice')
     return render_template("user/invoice.html", invoice=invoice)
 
 
@@ -1332,9 +1376,13 @@ def download_invoice(order_id):
         flash("Error generating PDF", "danger")
         return redirect('/user/my-orders')
 
+    mode = request.args.get('mode', 'inline')
+    if mode not in ['inline', 'attachment']:
+        mode = 'inline'
+
     response = make_response(pdf.getvalue())
     response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = f"attachment; filename=invoice_{order_id}.pdf"
+    response.headers['Content-Disposition'] = f"{mode}; filename=invoice_{order_id}.pdf"
 
     return response
 
